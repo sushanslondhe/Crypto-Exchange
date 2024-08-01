@@ -1,7 +1,3 @@
-export default function Home(){
-  return(
-    <div>
-      Exchange home page
-    </div>
-  )
+export default function Home() {
+  return <div className=" text-center text-white">Exchange home page</div>;
 }
