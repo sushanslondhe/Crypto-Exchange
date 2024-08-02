@@ -1,20 +1,21 @@
-export interface Klines {
+export interface KLine {
   close: string;
   end: string;
   high: string;
   low: string;
   open: string;
-  quoteVolune: string;
+  quoteVolume: string;
   start: string;
   trades: string;
-  vloume: string;
+  volume: string;
 }
 
-export interface Trades {
+export interface Trade {
   id: number;
   isBuyerMaker: boolean;
-  quantiy: string;
-  quoteQuanity: string;
+  price: string;
+  quantity: string;
+  quoteQuantity: string;
   timestamp: number;
 }
 

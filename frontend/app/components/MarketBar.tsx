@@ -10,7 +10,7 @@ export default function MarketBar({ market }: { market: string }) {
     getTicker(market).then(setTicker);
   }, [market]);
   return (
-    <div className="flex items-center justify-between flex-row  w-full gap-4 overflow-auto pr-4 border border-slate-500">
+    <div className="flex items-center justify-between flex-row  w-full gap-4 overflow-auto pr-4 border border-slate-900">
       <div className=" flex h-[60px] shrink-0 space-x-4 text-white">
         <div className="">
           <TickerC market={market} />
