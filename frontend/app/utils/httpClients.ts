@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Depth, KLine, Ticker, Trade } from "./types";
+//
 
 const BASE_URL = "https://exchange-proxy.100xdevs.com/api/v1";
 
@@ -22,7 +23,7 @@ export async function getDepth(market: string): Promise<Depth> {
   const response = await axios.get(`${BASE_URL}/depth?symbol=${market}`);
   return response.data;
 }
-export async function getTrades(market: string): Promise<Trade[]> {
+export async function getTrades(market: string): Promise<any> {
   const response = await axios.get(`${BASE_URL}/trades?symbol=${market}`);
   return response.data;
 }
