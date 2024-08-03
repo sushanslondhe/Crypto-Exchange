@@ -1,10 +1,8 @@
 export default function BidsTable({ bids }: { bids: [string, string][] }) {
   let currentTotal = 0;
-  let relevantBids = bids.slice(360, 377);
+  let n = 15;
+  let relevantBids = bids.slice(-n);
   relevantBids.reverse();
-  // console.log(relevantBids.reverse());
-
-  // console.log(relevantBids);
 
   const bidsWithTotal: [string, string, number][] = relevantBids.map(
     ([price, quantity]) => [price, quantity, (currentTotal += Number(quantity))]
