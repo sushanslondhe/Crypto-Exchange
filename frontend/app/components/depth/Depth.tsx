@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import AsksTable from "./AsksTable";
 import BidsTable from "./BidsTable";
 import TradesTable from "../trades/TradesTable";
+import { SignalingManager } from "@/app/utils/SignalingManager";
 
 export function Depth({ market, isOpen }: { market: string; isOpen: any }) {
   // get Depth function -> askstable, bidstable
@@ -13,16 +14,64 @@ export function Depth({ market, isOpen }: { market: string; isOpen: any }) {
   const [trades, setTrades] = useState<any>();
 
   useEffect(() => {
+    SignalingManager.getInstance().registerCallback(
+      "depth",
+      (data: any) => {
+        setBids((originalBids) => {
+          const bidsAfterUpdate = [...(originalBids || [])];
+
+          for (let i = 0; i < bidsAfterUpdate.length; i++) {
+            for (let j = 0; j < data.bids.length; j++) {
+              if (bidsAfterUpdate[i][0] === data.bids[j][0]) {
+                bidsAfterUpdate[i][1] = data.bids[j][1];
+                break;
+              }
+            }
+          }
+
+          return bidsAfterUpdate;
+        });
+
+        setAsks((originalAsks) => {
+          const asksAfterUpdate = [...(originalAsks || [])];
+
+          for (let i = 0; i < asksAfterUpdate.length; i++) {
+            for (let j = 0; j < data.asks.length; j++) {
+              if (asksAfterUpdate[i][0] === data.asks[j][0]) {
+                asksAfterUpdate[i][1] = data.asks[j][1];
+                break;
+              }
+            }
+          }
+          return asksAfterUpdate;
+        });
+      },
+      `DEPTH-${market}`
+    );
+
+    SignalingManager.getInstance().sendMessage({
+      method: "SUBSCRIBE",
+      params: [`depth.200ms.${market}`],
+    });
+
     getDepth(market).then((d) => {
-      setAsks(d.asks);
       setBids(d.bids);
+      setAsks(d.asks);
     });
-    getTicker(market).then((x) => {
-      setPrice(x.lastPrice);
-    });
-    getTrades(market).then((val) => {
-      setTrades(val);
-    });
+
+    getTicker(market).then((t) => setPrice(t.lastPrice));
+    getTrades(market).then((t) => setTrades(t));
+    // getKlines(market, "1h", 1640099200, 1640100800).then(t => setPrice(t[0].close));
+    return () => {
+      SignalingManager.getInstance().sendMessage({
+        method: "UNSUBSCRIBE",
+        params: [`depth.200ms.${market}`],
+      });
+      SignalingManager.getInstance().deRegisterCallback(
+        "depth",
+        `DEPTH-${market}`
+      );
+    };
   }, []);
   {
     if (isOpen) {
