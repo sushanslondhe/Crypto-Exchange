@@ -4,6 +4,8 @@ import AsksTable from "./AsksTable";
 import BidsTable from "./BidsTable";
 import TradesTable from "../trades/TradesTable";
 import { SignalingManager } from "@/app/utils/SignalingManager";
+import { da } from "date-fns/locale";
+import { Trade } from "@/app/utils/types";
 
 export function Depth({ market, isOpen }: { market: string; isOpen: any }) {
   // get Depth function -> askstable, bidstable
@@ -48,10 +50,26 @@ export function Depth({ market, isOpen }: { market: string; isOpen: any }) {
       },
       `DEPTH-${market}`
     );
+    SignalingManager.getInstance().registerCallback(
+      "trade",
+      (data: Partial<Trade>) =>
+        setTrades((originalTrades: any) => {
+          const tradesAfterUpdates = [data, ...(originalTrades || [])];
+          // Trade
+          // console.log(data);
+          return tradesAfterUpdates.slice(0, 50);
+        }),
+      `TRADE-${market}`
+    );
 
     SignalingManager.getInstance().sendMessage({
       method: "SUBSCRIBE",
       params: [`depth.200ms.${market}`],
+    });
+
+    SignalingManager.getInstance().sendMessage({
+      method: "SUBSCRIBE",
+      params: [`trade.${market}`],
     });
 
     getDepth(market).then((d) => {
@@ -70,6 +88,14 @@ export function Depth({ market, isOpen }: { market: string; isOpen: any }) {
       SignalingManager.getInstance().deRegisterCallback(
         "depth",
         `DEPTH-${market}`
+      );
+      SignalingManager.getInstance().sendMessage({
+        method: "UNSUBSCRIBE",
+        params: [`trade.${market}`],
+      });
+      SignalingManager.getInstance().deRegisterCallback(
+        "trade",
+        `TRADE-${market}`
       );
     };
   }, []);

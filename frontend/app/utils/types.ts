@@ -16,7 +16,7 @@ export interface Trade {
   price: string;
   quantity: string;
   quoteQuantity: string;
-  timestamp: number;
+  timestamp: string;
 }
 
 export interface Depth {

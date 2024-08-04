@@ -1,4 +1,5 @@
-import { Ticker } from "./types";
+import { formatTime } from "../components/trades/TradesTable";
+import { Ticker, Trade } from "./types";
 
 export const BASE_URL = "wss://ws.backpack.exchange/";
 // export const BASE_URL = "ws://localhost:3001";
@@ -37,6 +38,7 @@ export class SignalingManager {
       const message = JSON.parse(event.data);
       const type = message.data.e;
       if (this.callbacks[type]) {
+        // @ts-ignore
         this.callbacks[type].forEach(({ callback }) => {
           if (type === "ticker") {
             const newTicker: Partial<Ticker> = {
@@ -65,6 +67,16 @@ export class SignalingManager {
             const updatedAsks = message.data.a;
             callback({ bids: updatedBids, asks: updatedAsks });
           }
+          if (type === "trade") {
+            // console.log(message);
+            const newTrades: Partial<Trade> = {
+              price: message.data.p,
+              quantity: message.data.q,
+              timestamp: message.data.t,
+            };
+            console.log(newTrades);
+            callback(newTrades);
+          }
         });
       }
     };
@@ -91,6 +103,7 @@ export class SignalingManager {
   async deRegisterCallback(type: string, id: string) {
     if (this.callbacks[type]) {
       const index = this.callbacks[type].findIndex(
+        // @ts-ignore
         (callback) => callback.id === id
       );
       if (index !== -1) {
