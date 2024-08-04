@@ -12,10 +12,10 @@ export default function Page() {
 
   return (
     <div className="flex flex-row flex-1">
-      <div className=" flex flex-col flex-1">
+      <div className="md:flex md:flex-col md:flex-1">
         <MarketBar market={market as string} />
-        <div className="  border-y h-[620px] border-slate-900 text-white flex flex-row ">
-          <div className="ml-3 mt-[6px] h-full  w-[75%]">
+        <div className=" flex flex-col border-y h-[620px] border-slate-900 text-white md:flex md:flex-row ">
+          <div className="ml-3 mt-[6px] h-full  md:w-[75%] w-[600px] ">
             <TradeView market={market as string} timeFrame="30m" />
           </div>
           <div className="border  flex flex-col border-slate-800 border-1">
@@ -35,7 +35,7 @@ export default function Page() {
                 Trades
               </button>
             </div>
-            <div className="  w-full overflow-y-scroll no-scrollbar">
+            <div className="mx-auto  md:w-full overflow-y-scroll no-scrollbar">
               <Depth isOpen={BookOpen} market={market as string} />
             </div>
           </div>
@@ -43,7 +43,7 @@ export default function Page() {
 
         <div />
       </div>
-      <div className="border border-slate-700 min-h-screen w-[18%] flex flex-col text-white">
+      <div className="border max-md:hidden border-slate-700 min-h-screen w-[18%] flex flex-col text-white">
         <div>
           <SwapUI market={market as string} />
         </div>
